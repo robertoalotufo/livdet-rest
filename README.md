@@ -2,6 +2,10 @@
 REST API client
 
 ## How to compile
+Dependencies needed to build:
+* C++11 compiler
+* OpenSSL
+
 First, initialize the submodules:
 ```
 $ git submodule update --recursive --init
