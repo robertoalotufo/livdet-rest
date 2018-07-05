@@ -43,7 +43,7 @@ Then enter to powershell:
 > cmake --build . --config Release
 ```
 
-The "Visual Studio 15 2017 Win64" string might change depending on what version of Visual Studio your system has installed.
+The "Visual Studio 15 2017 Win64" string might change depending on what version of Visual Studio you have installed on system.
 
 After the build is complete, navigate to the 'Release' directory inside the 'build' directory, copy the libcurl.dll file to it, then you can execute the livdet-client.exe program:
 ```
