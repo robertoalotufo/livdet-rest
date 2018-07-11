@@ -11,7 +11,7 @@ static const char _USAGE[] =
     R"(Livdet Predictor.
 
 Usage:
-  __PROGNAME__ -i img [--csv-out file]
+  __PROGNAME__ -i img [--csv-out file --fast]
   __PROGNAME__ (-h | --help)
   __PROGNAME__ --version
 
@@ -19,7 +19,8 @@ Options:
   -h --help       Show this screen.
   --version       Show version.
   -i img          Input image file.
-  --csv-out file  Put the results in a csv file (separated with ';')
+  --csv-out file  Put the results in a csv file (separated with ';').
+  --fast          Use a faster but less precise prediction algorithm.
 )";
 
 /*
@@ -52,6 +53,7 @@ int main(int argc, char** argv)
 						 true,               // show help if requested
 						 "Livdet Client Predictor V0.1");  // version string
 	bool write_csv = false;
+	bool fast_predict = false;
 	std::vector<string> img_file_list;
 	std::ofstream csv_file;
 
@@ -73,20 +75,34 @@ int main(int argc, char** argv)
 		write_csv = true;
 	}
 
+	/*
+	 * Check if a fast prediction is selected
+	 */
+	if (args["--fast"].asBool())
+	{
+		fast_predict = true;
+	}
+
 	for (auto img_file : img_file_list)
 	{
+		/*
+		 * Fast parameter
+		 */
+		auto predict_mode =	cpr::Parameters{{"fast", fast_predict}};
+
 		/*
 		 * Do a http Post operation
 		 */
 		auto r = cpr::Post(cpr::Url{"http://nm-livdet.ddns.net/api/predict/"},
-						   cpr::Multipart{{"image", cpr::File{img_file}}});
+						   cpr::Multipart{{"image", cpr::File{img_file}}},
+						   predict_mode);
 
 		/*
 		 * If the response isn't 201, something is wrong.
 		 */
 		if (r.status_code != 201)
 		{
-			cerr << "Unexpected response: " << r.status_code;
+			cerr << "Unexpected response: " << r.status_code << endl;
 			return 1;
 		}
 
