@@ -11,7 +11,7 @@ static const char _USAGE[] =
     R"(Livdet Predictor.
 
 Usage:
-  __PROGNAME__ -i img [--csv-out file --fast]
+  __PROGNAME__ -i img [--csv-out file --fast -v]
   __PROGNAME__ (-h | --help)
   __PROGNAME__ --version
 
@@ -21,6 +21,7 @@ Options:
   -i img          Input image file.
   --csv-out file  Put the results in a csv file (separated with ';').
   --fast          Use a faster but less precise prediction algorithm.
+  -v              Verbose output.
 )";
 
 /*
@@ -138,7 +139,15 @@ int main(int argc, char** argv)
 		cout << "genuine: " << result << endl;
 		cout << "fake: " << (1 - result) << endl;
 		cout << "Prediction time: " << predict_time << endl;
-		cout << r.text << endl;
+
+		/*
+		 * Print the Json string if the verbose flag is used
+		 */
+		if (args["-v"].asBool())
+		{
+			cout << "Json response:" << endl;
+			cout << r.text << endl;
+		}
 	}
 
 	/*
