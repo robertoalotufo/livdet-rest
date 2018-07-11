@@ -86,16 +86,10 @@ int main(int argc, char** argv)
 	for (auto img_file : img_file_list)
 	{
 		/*
-		 * Fast parameter
-		 */
-		auto predict_mode =	cpr::Parameters{{"fast", fast_predict}};
-
-		/*
 		 * Do a http Post operation
 		 */
 		auto r = cpr::Post(cpr::Url{"http://nm-livdet.ddns.net/api/predict/"},
-						   cpr::Multipart{{"image", cpr::File{img_file}}},
-						   predict_mode);
+						   cpr::Multipart{{"image", cpr::File{img_file}}, {"fast", fast_predict}});
 
 		/*
 		 * If the response isn't 201, something is wrong.
@@ -144,6 +138,7 @@ int main(int argc, char** argv)
 		cout << "genuine: " << result << endl;
 		cout << "fake: " << (1 - result) << endl;
 		cout << "Prediction time: " << predict_time << endl;
+		cout << r.text << endl;
 	}
 
 	/*
