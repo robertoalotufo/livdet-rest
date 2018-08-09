@@ -11,7 +11,7 @@ static const char _USAGE[] =
     R"(Livdet Predictor.
 
 Usage:
-  __PROGNAME__ -i img [--csv-out file --fast -v]
+  __PROGNAME__ -i img -t token [--csv-out file --fast -v]
   __PROGNAME__ (-h | --help)
   __PROGNAME__ --version
 
@@ -19,6 +19,7 @@ Options:
   -h --help       Show this screen.
   --version       Show version.
   -i img          Input image file.
+  -t token        Authentification token
   --csv-out file  Put the results in a csv file (separated with ';').
   --fast          Use a faster but less precise prediction algorithm.
   -v              Verbose output.
@@ -57,6 +58,7 @@ int main(int argc, char** argv)
 	bool fast_predict = false;
 	std::vector<string> img_file_list;
 	std::ofstream csv_file;
+  string token;
 
 	/*
 	 * Check if the -i flag was used
@@ -65,6 +67,10 @@ int main(int argc, char** argv)
 	{
 		img_file_list.push_back(args["-i"].asString().c_str());
 	}
+
+  if(args["-t"]){
+    token = args["-t"].asString();
+  }
 
 	/*
 	 * Check if the --csv-out flag was used
@@ -90,6 +96,7 @@ int main(int argc, char** argv)
 		 * Do a http Post operation
 		 */
 		auto r = cpr::Post(cpr::Url{"http://nm-livdet.ddns.net/api/predict/"},
+              cpr::Header{{"authorization", "Token "+token}},
 						   cpr::Multipart{{"image", cpr::File{img_file}}, {"fast", fast_predict}});
 
 		/*
