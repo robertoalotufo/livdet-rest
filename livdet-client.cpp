@@ -107,8 +107,7 @@ int main(int argc, char** argv)
 		/*
 		 * Do a http Post operation
 		 */
-		auto r = cpr::Post(cpr::Url{"http://127.0.0.1:8000/api/predict/"},
-		// auto r = cpr::Post(cpr::Url{"http://nm-livdet.ddns.net/api/predict/"},
+		auto r = cpr::Post(cpr::Url{"http://nm-livdet.ddns.net/api/predict/"},
               cpr::Header{{"authorization", "Token "+token}},
 						   cpr::Multipart{{"image", cpr::File{img_file}}, {"model_id", model_id}});
 
