@@ -11,7 +11,7 @@ static const char _USAGE[] =
     R"(Livdet Predictor.
 
 Usage:
-  __PROGNAME__ -i img -t token [--csv-out file --fast -v]
+  __PROGNAME__ -i img -t token [-m model_id --csv-out file --fast -v]
   __PROGNAME__ (-h | --help)
   __PROGNAME__ --version
 
@@ -20,8 +20,8 @@ Options:
   --version       Show version.
   -i img          Input image file.
   -t token        Authentification token
+  -m model        Model id (1, 2 or 3)
   --csv-out file  Put the results in a csv file (separated with ';').
-  --fast          Use a faster but less precise prediction algorithm.
   -v              Verbose output.
 )";
 
@@ -55,7 +55,8 @@ int main(int argc, char** argv)
 						 true,               // show help if requested
 						 "Livdet Client Predictor V0.1");  // version string
 	bool write_csv = false;
-	bool fast_predict = false;
+	// bool fast_predict = false;
+  string model_id = "1";
 	std::vector<string> img_file_list;
 	std::ofstream csv_file;
   string token;
@@ -68,6 +69,9 @@ int main(int argc, char** argv)
 		img_file_list.push_back(args["-i"].asString().c_str());
 	}
 
+  /*
+   * Gets the token string
+   */
   if(args["-t"]){
     token = args["-t"].asString();
   }
@@ -85,9 +89,17 @@ int main(int argc, char** argv)
 	/*
 	 * Check if a fast prediction is selected
 	 */
-	if (args["--fast"].asBool())
+	// if (args["--fast"].asBool())
+	// {
+	// 	fast_predict = true;
+	// }
+
+  /*
+   * Check if the model id flag was set
+   */
+  if (args["-m"])
 	{
-		fast_predict = true;
+		model_id = args["-m"].asString();
 	}
 
 	for (auto img_file : img_file_list)
@@ -95,10 +107,12 @@ int main(int argc, char** argv)
 		/*
 		 * Do a http Post operation
 		 */
-		auto r = cpr::Post(cpr::Url{"http://nm-livdet.ddns.net/api/predict/"},
+		auto r = cpr::Post(cpr::Url{"http://127.0.0.1:8000/api/predict/"},
+		// auto r = cpr::Post(cpr::Url{"http://nm-livdet.ddns.net/api/predict/"},
               cpr::Header{{"authorization", "Token "+token}},
-						   cpr::Multipart{{"image", cpr::File{img_file}}, {"fast", fast_predict}});
+						   cpr::Multipart{{"image", cpr::File{img_file}}, {"model_id", model_id}});
 
+    cout << r.text;
 		/*
 		 * If the response isn't 201, something is wrong.
 		 */
