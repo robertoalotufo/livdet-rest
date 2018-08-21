@@ -111,7 +111,6 @@ int main(int argc, char** argv)
               cpr::Header{{"authorization", "Token "+token}},
 						   cpr::Multipart{{"image", cpr::File{img_file}}, {"model_id", model_id}});
 
-    cout << r.text;
 		/*
 		 * If the response isn't 201, something is wrong.
 		 */
